@@ -1,0 +1,18 @@
+apiVersion: k6.io/v1alpha1
+kind: TestRun
+metadata:
+  name: {{ .Values.k6.name }}
+spec:
+  parallelism: {{ .Values.k6.parallelism }}
+  arguments: --out statsd --verbose
+  script:
+    configMap:
+      name: {{ .Values.TestRun.name }}
+      file: {{ .Values.TestRun.test_script }}
+  runner:                                              # <=== HERE
+    image: k6-datadog-image:latest
+    env:                                               # <=== env is part of runner spec
+      - name: K6_STATSD_ENABLE_TAGS
+        value: "true"
+      - name: K6_STATSD_ADDR
+        value: datadog-agent-cluster-ip-service:8125

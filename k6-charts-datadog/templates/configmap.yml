@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.config.name }}
+  labels:
+    releases: {{ .Release.Name }}
+data:
+  {{- (.Files.Glob "k6-scripts/*").AsConfig | nindent 2 }}

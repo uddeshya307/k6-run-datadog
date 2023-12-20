@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datadog-agent-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: datadog-agent
+  template:
+    metadata:
+      labels:
+        component: datadog-agent
+    spec:
+      containers:
+        - name: datadog-agent
+          image: datadog/agent:latest
+          ports:
+            - containerPort: 8125
+          env:
+            - name: DD_SITE
+              value: https://us5.datadoghq.com
+            - name: DD_API_KEY
+              value: 85b07ef731370b692b7abaabfe7c8551 # BUT!!! better way is to create k8s secret with key and use envFrom.secretRef
+            - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+              value: "1"
+            - name: DD_HOSTNAME_FILE
+              value: /etc/hostname
